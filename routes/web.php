@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\BoardroomController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -22,3 +23,4 @@ Auth::routes();
 Route::middleware(['IsAdmin'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 });
+Route::apiResource('boardroom',BoardroomController::class);
