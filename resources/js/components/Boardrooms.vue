@@ -24,6 +24,7 @@
                             </h5>
                             </div>
                             <div class="card-body"><h2>{{clock}}</h2></div>
+                            <router-link to="/reservation">Go to Bar</router-link>
                         </div>
                     </div>
                 </div>
@@ -65,6 +66,7 @@
 
 <script>
     export default {
+        name: "Boardroom",
         data(){
             return{
                 clock:'',
