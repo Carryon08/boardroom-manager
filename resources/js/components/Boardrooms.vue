@@ -24,7 +24,8 @@
                             </h5>
                             </div>
                             <div class="card-body"><h2>{{clock}}</h2></div>
-                            <router-link to="/reservation">Go to Bar</router-link>
+<!--                            <router-link to="/reservation">Go to Bar</router-link>-->
+                            <reservation :id="boardroom.id" :auth_id="authUser.id"/>
                         </div>
                     </div>
                 </div>
@@ -65,8 +66,12 @@
 </template>
 
 <script>
+    import reservation from "./reservation";
     export default {
         name: "Boardroom",
+        components:{
+            reservation,
+        },
         data(){
             return{
                 clock:'',
@@ -81,12 +86,19 @@
                     name:'',
                     created_at:'',
                 },
+                authUser:{
+                    id:'',
+                    name:'',
+                },
             }
         },
         methods:{
             async getBoardrooms(){
                 const response=await axios.get('boardroom');
+                const auth=await axios.get('get-auth');
                 this.boardrooms = response.data;
+                this.authUser = auth.data;
+
             },
             async deleteBoardroom(id){
                 const response=await axios.delete('/boardroom/'+id);
