@@ -52,7 +52,9 @@ class BoardroomController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $boardroom = Boardroom::find($id);
+        $boardroom->fill($request->all());
+        $boardroom->save();
     }
 
     /**
@@ -63,6 +65,7 @@ class BoardroomController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Boardroom::find($id)->delete();
+
     }
 }
