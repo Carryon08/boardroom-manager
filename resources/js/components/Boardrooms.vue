@@ -6,7 +6,7 @@
                     <div class="card-header " >
                         <h2>Salas registradas
                         <a class="btn btn-elevate btn-success float-right btn-circle"
-                           @click="modalType=true, showModal()">Nueva sala</a>
+                           @click="modalType=true, showModal()" v-if="admin">Nueva sala</a>
                         </h2>
                     </div>
 
@@ -14,17 +14,30 @@
 
                         <div class="card col-md-5 bg-primary mr-2 ml-2 mt-2" v-for="boardroom in boardrooms" :key="boardroom.id">
                             <div class="card-header font-weight-bold"><h5>{{boardroom.name}}
-                                <a class="btn btn-danger btn-elevate btn-circle btn-icon float-right ml-3"
+                                <a class="btn btn-danger btn-elevate btn-circle btn-icon float-right ml-3" v-if="admin"
                                    @click="deleteBoardroom(boardroom.id)" title="Borrar"><i class="fas fa-trash"></i>
                                 </a>
-                                &nbsp;
-                                <a class="btn btn-warning btn-elevate btn-circle btn-icon float-right " title="Editar"
+                                &nbsp
+                                <a class="btn btn-warning btn-elevate btn-circle btn-icon float-right " title="Editar" v-if="admin"
                                        @click="modalType=false, showModal(boardroom)"><i class="far fa-edit"></i>
                                 </a>
                             </h5>
                             </div>
-                            <div class="card-body"><h2>{{clock}}</h2></div>
-<!--                            <router-link to="/reservation">Go to Bar</router-link>-->
+                            <br>
+                            <table class="table">
+                                <tbody>
+                                <tr v-for="reservation in boardroom.reservations" :key="boardrooms.id" >
+                                    <th scope="row">{{reservation.start_hour}}</th>
+                                    <th >{{reservation.end_hour}}</th>
+                                    <td>
+                                        <a class="btn btn-danger btn-elevate btn-circle btn-icon float-right ml-3" v-if="admin"
+                                           @click="deleteReservation(reservation.id)" title="Borrar"><i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <br>
                             <reservation :id="boardroom.id" :auth_id="authUser.id"/>
                         </div>
                     </div>
@@ -85,23 +98,45 @@
                 boardroom: {
                     name:'',
                     created_at:'',
+                    reservations:[],
                 },
                 authUser:{
                     id:'',
                     name:'',
                 },
+                admin:'',
+            }
+        },
+        computed:{
+            descriptionFieldClasses: function () {
+                if (this.reservation.user_id===this.auth.id) {
+                    return [
+                        'bg-warning',
+                    ];
+                }
             }
         },
         methods:{
             async getBoardrooms(){
+                axios.get('delete-reservations');
                 const response=await axios.get('boardroom');
                 const auth=await axios.get('get-auth');
                 this.boardrooms = response.data;
                 this.authUser = auth.data;
+                if(this.authUser.user_type_id===1) {
+                    this.admin=true;
+                }
+                else {
+                    this.admin=false;
+                }
 
             },
             async deleteBoardroom(id){
                 const response=await axios.delete('/boardroom/'+id);
+                this.getBoardrooms();
+            },
+            async deleteReservation(id){
+                const response=await axios.delete('/reservation/'+id);
                 this.getBoardrooms();
             },
             async showModal(data={}){
@@ -129,25 +164,9 @@
                 this.closeModal();
                 this.getBoardrooms();
             },
-            async moveClock(){
-                let momentoActual = new Date();
-                let hora = momentoActual.getHours();
-                let minuto = momentoActual.getMinutes();
-                let segundo = momentoActual.getSeconds();
-
-                this.clock= hora + " : " + minuto + " : " + segundo;
-
-
-
-                //La función se tendrá que llamar así misma para que sea dinámica,
-                //de esta forma:
-
-                setTimeout(this.moveClock,1000)
-            },
         },
         created(){
             this.getBoardrooms();
-            this.moveClock();
         },
 
     }

@@ -22,9 +22,9 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::middleware(['IsAdmin'])->group(function () {
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
-});
+Route::get('/home', [HomeController::class, 'index'])->name('home');
+
 Route::apiResource('boardroom',BoardroomController::class);
 Route::apiResource('reservation',ReservationController::class);
 Route::get('get-auth',[UserController::class,'getAuthUser'])->name('auth.get');
+Route::get('delete-reservations',[ReservationController::class,'deleteReservations'])->name('delete.reservations');

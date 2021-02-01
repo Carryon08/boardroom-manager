@@ -20,7 +20,9 @@ class Boardroom extends Model
         'name',
     ];
 
-    public function reservation()
+    protected $with = ['reservations'];
+
+    public function reservations()
     {
         return $this->hasMany(Reservation::class);
     }

@@ -1,6 +1,7 @@
 <template>
     <div class="container">
         <div class="row justify-content-center">
+
             <a class="btn btn-elevate btn-success float-right btn-circle"
                @click="modalType=true, showModal()">Nueva reserva</a>
 
@@ -64,46 +65,29 @@
                     boardroom_id:'',
                     user_id:'',
                 },
+                reservations:[
+
+                ],
             }
         },
         methods:{
-            async getUsers(){
-                const response=await axios.get('user');
-                this.users = response.data;
-            },
-            async deleteUser(id){
-                const response=await axios.delete('/user/'+id);
-                this.getUsers();
+            getBoardroomReservations(){
+                const response= axios.get('/reservation',this.id);
+                this.reservations = response.data;
             },
             async showModal(data={}){
                 this.modal =1 ;
-                if(this.modalType){
-                    this.modalTitle="Crear evento en sala"+this.id;
-                    this.reservation.boardroom_id = this.id;
-                    this.reservation.user_id = this.auth_id;
-                }
-                else {
-                    this.modalTitle="Editar usuario";
-                    this.id = data.id;
-                    this.user.name = data.name;
-                    this.user.email = data.email;
-                    this.user.user_type_id = data.user_type_id;
-                }
+                this.modalTitle="Crear evento";
+                this.reservation.start_hour ='';
+                this.reservation.end_hour ='';
+                this.reservation.boardroom_id = this.id;
+                this.reservation.user_id = this.auth_id;
             },
             async closeModal(){
                 this.modal =0 ;
             },
             async saveReservation(id){
-                if(this.modalType) {
-                    let startHours=this.reservation.start_hour.getHours();
-                    let startMinutes =this.reservation.start_hour.getMinutes();
-                    this.reservation.start_hour = startHours+':'+startMinutes;
-
-                    //axios.post('/reservation',this.reservation);
-                }
-                else {
-                    axios.put('/user/'+this.id,this.user);
-                }
+                axios.post('/reservation',this.reservation);
                 this.closeModal();
             },
         },

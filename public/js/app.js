@@ -1932,6 +1932,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "Boardroom",
@@ -1948,13 +1961,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       boardrooms: [this.name = ''],
       boardroom: {
         name: '',
-        created_at: ''
+        created_at: '',
+        reservations: []
       },
       authUser: {
         id: '',
         name: ''
-      }
+      },
+      admin: ''
     };
+  },
+  computed: {
+    descriptionFieldClasses: function descriptionFieldClasses() {
+      if (this.reservation.user_id === this.auth.id) {
+        return ['bg-warning'];
+      }
+    }
   },
   methods: {
     getBoardrooms: function getBoardrooms() {
@@ -1966,20 +1988,27 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.next = 2;
+                axios.get('delete-reservations');
+                _context.next = 3;
                 return axios.get('boardroom');
 
-              case 2:
+              case 3:
                 response = _context.sent;
-                _context.next = 5;
+                _context.next = 6;
                 return axios.get('get-auth');
 
-              case 5:
+              case 6:
                 auth = _context.sent;
                 _this.boardrooms = response.data;
                 _this.authUser = auth.data;
 
-              case 8:
+                if (_this.authUser.user_type_id === 1) {
+                  _this.admin = true;
+                } else {
+                  _this.admin = false;
+                }
+
+              case 10:
               case "end":
                 return _context.stop();
             }
@@ -2012,29 +2041,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee2);
       }))();
     },
-    showModal: function showModal() {
-      var _arguments = arguments,
-          _this3 = this;
+    deleteReservation: function deleteReservation(id) {
+      var _this3 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
-        var data;
+        var response;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                data = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : {};
-                _this3.modal = 1;
+                _context3.next = 2;
+                return axios["delete"]('/reservation/' + id);
 
-                if (_this3.modalType) {
-                  _this3.modalTitle = "Crear sala";
-                  _this3.boardroom.name = '';
-                } else {
-                  _this3.modalTitle = "Editar sala";
-                  _this3.id = data.id;
-                  _this3.boardroom.name = data.name;
-                }
+              case 2:
+                response = _context3.sent;
 
-              case 3:
+                _this3.getBoardrooms();
+
+              case 4:
               case "end":
                 return _context3.stop();
             }
@@ -2042,17 +2066,29 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee3);
       }))();
     },
-    closeModal: function closeModal() {
-      var _this4 = this;
+    showModal: function showModal() {
+      var _arguments = arguments,
+          _this4 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
+        var data;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                _this4.modal = 0;
+                data = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : {};
+                _this4.modal = 1;
 
-              case 1:
+                if (_this4.modalType) {
+                  _this4.modalTitle = "Crear sala";
+                  _this4.boardroom.name = '';
+                } else {
+                  _this4.modalTitle = "Editar sala";
+                  _this4.id = data.id;
+                  _this4.boardroom.name = data.name;
+                }
+
+              case 3:
               case "end":
                 return _context4.stop();
             }
@@ -2060,7 +2096,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee4);
       }))();
     },
-    saveBoardroom: function saveBoardroom(id) {
+    closeModal: function closeModal() {
       var _this5 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5() {
@@ -2068,17 +2104,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                if (_this5.modalType) {
-                  axios.post('/boardroom', _this5.boardroom);
-                } else {
-                  axios.put('/boardroom/' + _this5.id, _this5.boardroom);
-                }
+                _this5.modal = 0;
 
-                _this5.closeModal();
-
-                _this5.getBoardrooms();
-
-              case 3:
+              case 1:
               case "end":
                 return _context5.stop();
             }
@@ -2086,25 +2114,25 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee5);
       }))();
     },
-    moveClock: function moveClock() {
+    saveBoardroom: function saveBoardroom(id) {
       var _this6 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6() {
-        var momentoActual, hora, minuto, segundo;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee6$(_context6) {
           while (1) {
             switch (_context6.prev = _context6.next) {
               case 0:
-                momentoActual = new Date();
-                hora = momentoActual.getHours();
-                minuto = momentoActual.getMinutes();
-                segundo = momentoActual.getSeconds();
-                _this6.clock = hora + " : " + minuto + " : " + segundo; //La función se tendrá que llamar así misma para que sea dinámica,
-                //de esta forma:
+                if (_this6.modalType) {
+                  axios.post('/boardroom', _this6.boardroom);
+                } else {
+                  axios.put('/boardroom/' + _this6.id, _this6.boardroom);
+                }
 
-                setTimeout(_this6.moveClock, 1000);
+                _this6.closeModal();
 
-              case 6:
+                _this6.getBoardrooms();
+
+              case 3:
               case "end":
                 return _context6.stop();
             }
@@ -2115,7 +2143,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   created: function created() {
     this.getBoardrooms();
-    this.moveClock();
   }
 });
 
@@ -2132,7 +2159,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ });
-//
 //
 //
 //
@@ -2220,6 +2246,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['id', 'auth_id'],
@@ -2233,27 +2260,34 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         end_hour: '',
         boardroom_id: '',
         user_id: ''
-      }
+      },
+      reservations: []
     };
   },
   methods: {
-    getUsers: function getUsers() {
-      var _this = this;
+    getBoardroomReservations: function getBoardroomReservations() {
+      var response = axios.get('/reservation', this.id);
+      this.reservations = response.data;
+    },
+    showModal: function showModal() {
+      var _arguments = arguments,
+          _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
-        var response;
+        var data;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.next = 2;
-                return axios.get('user');
+                data = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : {};
+                _this.modal = 1;
+                _this.modalTitle = "Crear evento";
+                _this.reservation.start_hour = '';
+                _this.reservation.end_hour = '';
+                _this.reservation.boardroom_id = _this.id;
+                _this.reservation.user_id = _this.auth_id;
 
-              case 2:
-                response = _context.sent;
-                _this.users = response.data;
-
-              case 4:
+              case 7:
               case "end":
                 return _context.stop();
             }
@@ -2261,24 +2295,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee);
       }))();
     },
-    deleteUser: function deleteUser(id) {
+    closeModal: function closeModal() {
       var _this2 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
-        var response;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _context2.next = 2;
-                return axios["delete"]('/user/' + id);
+                _this2.modal = 0;
 
-              case 2:
-                response = _context2.sent;
-
-                _this2.getUsers();
-
-              case 4:
+              case 1:
               case "end":
                 return _context2.stop();
             }
@@ -2286,82 +2313,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee2);
       }))();
     },
-    showModal: function showModal() {
-      var _arguments = arguments,
-          _this3 = this;
+    saveReservation: function saveReservation(id) {
+      var _this3 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
-        var data;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                data = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : {};
-                _this3.modal = 1;
+                axios.post('/reservation', _this3.reservation);
 
-                if (_this3.modalType) {
-                  _this3.modalTitle = "Crear evento en sala" + _this3.id;
-                  _this3.reservation.boardroom_id = _this3.id;
-                  _this3.reservation.user_id = _this3.auth_id;
-                } else {
-                  _this3.modalTitle = "Editar usuario";
-                  _this3.id = data.id;
-                  _this3.user.name = data.name;
-                  _this3.user.email = data.email;
-                  _this3.user.user_type_id = data.user_type_id;
-                }
+                _this3.closeModal();
 
-              case 3:
+              case 2:
               case "end":
                 return _context3.stop();
             }
           }
         }, _callee3);
-      }))();
-    },
-    closeModal: function closeModal() {
-      var _this4 = this;
-
-      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
-          while (1) {
-            switch (_context4.prev = _context4.next) {
-              case 0:
-                _this4.modal = 0;
-
-              case 1:
-              case "end":
-                return _context4.stop();
-            }
-          }
-        }, _callee4);
-      }))();
-    },
-    saveReservation: function saveReservation(id) {
-      var _this5 = this;
-
-      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5() {
-        var startHours, startMinutes;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
-          while (1) {
-            switch (_context5.prev = _context5.next) {
-              case 0:
-                if (_this5.modalType) {
-                  startHours = _this5.reservation.start_hour.getHours();
-                  startMinutes = _this5.reservation.start_hour.getMinutes();
-                  _this5.reservation.start_hour = startHours + ':' + startMinutes; //axios.post('/reservation',this.reservation);
-                } else {
-                  axios.put('/user/' + _this5.id, _this5.user);
-                }
-
-                _this5.closeModal();
-
-              case 2:
-              case "end":
-                return _context5.stop();
-            }
-          }
-        }, _callee5);
       }))();
     }
   },
@@ -60745,20 +60714,22 @@ var render = function() {
         _c("div", { staticClass: "card" }, [
           _c("div", { staticClass: "card-header " }, [
             _c("h2", [
-              _vm._v("Salas registradas\n                        "),
-              _c(
-                "a",
-                {
-                  staticClass:
-                    "btn btn-elevate btn-success float-right btn-circle",
-                  on: {
-                    click: function($event) {
-                      ;(_vm.modalType = true), _vm.showModal()
-                    }
-                  }
-                },
-                [_vm._v("Nueva sala")]
-              )
+              _vm._v("Salas registradas\n                    "),
+              _vm.admin
+                ? _c(
+                    "a",
+                    {
+                      staticClass:
+                        "btn btn-elevate btn-success float-right btn-circle",
+                      on: {
+                        click: function($event) {
+                          ;(_vm.modalType = true), _vm.showModal()
+                        }
+                      }
+                    },
+                    [_vm._v("Nueva sala")]
+                  )
+                : _vm._e()
             ])
           ]),
           _vm._v(" "),
@@ -60777,45 +60748,87 @@ var render = function() {
                     _c("h5", [
                       _vm._v(
                         _vm._s(boardroom.name) +
-                          "\n                                "
+                          "\n                            "
                       ),
-                      _c(
-                        "a",
-                        {
-                          staticClass:
-                            "btn btn-danger btn-elevate btn-circle btn-icon float-right ml-3",
-                          attrs: { title: "Borrar" },
-                          on: {
-                            click: function($event) {
-                              return _vm.deleteBoardroom(boardroom.id)
-                            }
-                          }
-                        },
-                        [_c("i", { staticClass: "fas fa-trash" })]
-                      ),
+                      _vm.admin
+                        ? _c(
+                            "a",
+                            {
+                              staticClass:
+                                "btn btn-danger btn-elevate btn-circle btn-icon float-right ml-3",
+                              attrs: { title: "Borrar" },
+                              on: {
+                                click: function($event) {
+                                  return _vm.deleteBoardroom(boardroom.id)
+                                }
+                              }
+                            },
+                            [_c("i", { staticClass: "fas fa-trash" })]
+                          )
+                        : _vm._e(),
                       _vm._v(
-                        "\n                                 \n                                "
+                        "\n                             \n                            "
                       ),
-                      _c(
-                        "a",
-                        {
-                          staticClass:
-                            "btn btn-warning btn-elevate btn-circle btn-icon float-right ",
-                          attrs: { title: "Editar" },
-                          on: {
-                            click: function($event) {
-                              ;(_vm.modalType = false), _vm.showModal(boardroom)
-                            }
-                          }
-                        },
-                        [_c("i", { staticClass: "far fa-edit" })]
-                      )
+                      _vm.admin
+                        ? _c(
+                            "a",
+                            {
+                              staticClass:
+                                "btn btn-warning btn-elevate btn-circle btn-icon float-right ",
+                              attrs: { title: "Editar" },
+                              on: {
+                                click: function($event) {
+                                  ;(_vm.modalType = false),
+                                    _vm.showModal(boardroom)
+                                }
+                              }
+                            },
+                            [_c("i", { staticClass: "far fa-edit" })]
+                          )
+                        : _vm._e()
                     ])
                   ]),
                   _vm._v(" "),
-                  _c("div", { staticClass: "card-body" }, [
-                    _c("h2", [_vm._v(_vm._s(_vm.clock))])
+                  _c("br"),
+                  _vm._v(" "),
+                  _c("table", { staticClass: "table" }, [
+                    _c(
+                      "tbody",
+                      _vm._l(boardroom.reservations, function(reservation) {
+                        return _c("tr", { key: _vm.boardrooms.id }, [
+                          _c("th", { attrs: { scope: "row" } }, [
+                            _vm._v(_vm._s(reservation.start_hour))
+                          ]),
+                          _vm._v(" "),
+                          _c("th", [_vm._v(_vm._s(reservation.end_hour))]),
+                          _vm._v(" "),
+                          _c("td", [
+                            _vm.admin
+                              ? _c(
+                                  "a",
+                                  {
+                                    staticClass:
+                                      "btn btn-danger btn-elevate btn-circle btn-icon float-right ml-3",
+                                    attrs: { title: "Borrar" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.deleteReservation(
+                                          reservation.id
+                                        )
+                                      }
+                                    }
+                                  },
+                                  [_c("i", { staticClass: "fas fa-trash" })]
+                                )
+                              : _vm._e()
+                          ])
+                        ])
+                      }),
+                      0
+                    )
                   ]),
+                  _vm._v(" "),
+                  _c("br"),
                   _vm._v(" "),
                   _c("reservation", {
                     attrs: { id: boardroom.id, auth_id: _vm.authUser.id }
@@ -60927,7 +60940,7 @@ var render = function() {
                         }
                       }
                     },
-                    [_vm._v("\n                                Cerrar")]
+                    [_vm._v("\n                            Cerrar")]
                   ),
                   _vm._v(" "),
                   _c(
@@ -60975,15 +60988,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    [
-      _c("router-link", { attrs: { to: "/" } }, [_vm._v("Go to Bar")]),
-      _vm._v(" "),
-      _c("router-view")
-    ],
-    1
-  )
+  return _c("div", [_c("router-view")], 1)
 }
 var staticRenderFns = []
 render._withStripped = true
